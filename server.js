@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const { storeData, getLastTenRequests } = require('./database');
 
 const app = express();
-const PORT = 7666;
+const PORT = 7667;
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
@@ -38,50 +38,51 @@ app.post('/store_data', (req, res) => {
 
 // Route to serve the HTML page with the last 10 requests
 app.get('/', (req, res) => {
-    getLastTenRequests((err, rows) => {
-      if (err) {
-        res.status(500).send('Error retrieving data');
-      } else {
-        let html = `
-          <html>
-            <head>
-              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
-              <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-              <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-              <style>
-                .CodeMirror {
-                  height: auto;
-                  border: 1px solid #ddd;
-                  margin-bottom: 10px;
-                  max-height: 200px;
-                }
-              </style>
-            </head>
-            <body>
-              <h1>store_requests</h1>
-              ${rows.map((row, index) => `
-                <textarea id="code${index}">${row.data}</textarea>
-              `).join('')}
-              <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                  ${rows.map((_, index) => `
-                    CodeMirror.fromTextArea(document.getElementById('code${index}'), {
-                      mode: {name: "javascript", json: true},
-                      theme: 'dracula',
-                      lineNumbers: true,
-                      readOnly: true
-                    });
-                  `).join('')}
-                });
-              </script>
-            </body>
-          </html>
-        `;
-        res.send(html);
-      }
-    });
+  getLastTenRequests((err, rows) => {
+    if (err) {
+      res.status(500).send('Error retrieving data');
+    } else {
+      let html = `
+        <html>
+          <head>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+            <style>
+              .CodeMirror {
+                height: auto;
+                border: 1px solid #ddd;
+                margin-bottom: 10px;
+                max-height: 200px;
+              }
+            </style>
+          </head>
+          <body>
+            <h1>store_requests</h1>
+            ${rows.map((row, index) => `
+              <textarea id="code${index}">${row.data}</textarea>
+            `).join('')}
+            <script>
+              document.addEventListener('DOMContentLoaded', function() {
+                ${rows.map((_, index) => `
+                  CodeMirror.fromTextArea(document.getElementById('code${index}'), {
+                    mode: {name: "javascript", json: true},
+                    theme: 'dracula',
+                    lineNumbers: true,
+                    readOnly: true,
+                    lineWrapping: true
+                  });
+                `).join('')}
+              });
+            </script>
+          </body>
+        </html>
+      `;
+      res.send(html);
+    }
   });
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
