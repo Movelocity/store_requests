@@ -80,7 +80,7 @@ app.get('/', (req, res) => {
                 // Function to resize the CodeMirror instance to fit its content
                 function resizeCodeMirror(instance) {
                   var contentHeight = instance.getScrollInfo().height;  // Calculate the height of the content within the editor
-                  instance.setSize(null, contentHeight + 'px');  // Set the height of the CodeMirror instance
+                  instance.setSize(null, contentHeight+20 + 'px');  // Set the height of the CodeMirror instance
                 }
 
                 // Resize the CodeMirror instance to fit its content
