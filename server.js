@@ -33,13 +33,13 @@ app.get('/', (req, res) => {
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
             <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/markdown/markdown.min.js"></script>
             <style>
               .CodeMirror {
-                height: auto;
-                border: 1px solid #333;
+                min-height: 100px;
+                height: 100px;
+                overflow: hidden;
                 margin-bottom: 10px;
-                max-height: 200px;
                 font-family: Consolas, monospace;
                 font-size: 14px;
                 line-height: 1.3;
@@ -55,26 +55,44 @@ app.get('/', (req, res) => {
                   padding: 4em;
                 }
               }
+              .div1 {
+                padding: 15px 10px;
+              }
             </style>
           </head>
           <body>
             <h1>store_requests</h1>
             ${rows.map((row, index) => `
-              <textarea id="code${index}">${row.data}</textarea>
+              <div class="div1"><textarea id="code${index}">${row.data}</textarea></div>
             `).join('')}
             <script>
-              document.addEventListener('DOMContentLoaded', function() {
-                ${rows.map((_, index) => `
-                  CodeMirror.fromTextArea(document.getElementById('code${index}'), {
-                    mode: {name: "markdown", json: true},
-                    theme: 'dracula',
-                    lineNumbers: true,
-                    readOnly: false,
-                    lineWrapping: true
-                  });
-                `).join('')}
-              });
-            </script>
+            document.addEventListener('DOMContentLoaded', function() {
+              ${rows.map((_, index) => `
+                var textarea = document.getElementById('code${index}');
+                var codeMirror = CodeMirror.fromTextArea(textarea, {
+                  mode: {name: "javascript", json: true},
+                  theme: 'dracula',
+                  lineNumbers: true,
+                  readOnly: true,
+                  lineWrapping: true
+                });
+
+                // Function to resize the CodeMirror instance to fit its content
+                function resizeCodeMirror(instance) {
+                  var contentHeight = instance.getScrollInfo().height;  // Calculate the height of the content within the editor
+                  instance.setSize(null, contentHeight + 'px');  // Set the height of the CodeMirror instance
+                }
+
+                // Resize the CodeMirror instance to fit its content
+                resizeCodeMirror(codeMirror);
+
+                // Optional: If content can change, you might want to resize on changes as well
+                codeMirror.on('change', function(instance) {
+                  resizeCodeMirror(instance);
+                });
+              `).join('')}
+            });
+          </script>
           </body>
         </html>
       `;
