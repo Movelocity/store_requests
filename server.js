@@ -67,7 +67,7 @@ app.get('/', (req, res) => {
               document.addEventListener('DOMContentLoaded', function() {
                 ${rows.map((_, index) => `
                   CodeMirror.fromTextArea(document.getElementById('code${index}'), {
-                    mode: {name: "javascript", json: true},
+                    mode: {name: "markdown", json: true},
                     theme: 'dracula',
                     lineNumbers: true,
                     readOnly: true,

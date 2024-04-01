@@ -24,7 +24,8 @@ db.run('CREATE TABLE IF NOT EXISTS requests(data TEXT)', (err) => {
 
 // Function to insert data into the table
 function storeData(data, callback) {
-  db.run('INSERT INTO requests(data) VALUES(?)', [data], function(err) {
+  let d = data?.data;
+  db.run('INSERT INTO requests(data) VALUES(?)', [d], function(err) {
     callback(err);
   });
 }
