@@ -10,7 +10,8 @@ app.use(bodyParser.json());
 
 // Route to handle POST requests
 app.post('/store_data', (req, res) => {
-  const data = JSON.stringify(req.body);
+
+  const data = req.body?.data? req.body.data: JSON.stringify(req.body);
   storeData(data, (err) => {
     if (err) {
       res.status(500).send('Error saving data');
@@ -19,22 +20,6 @@ app.post('/store_data', (req, res) => {
     }
   });
 });
-
-// Route to serve the HTML page with the last 10 requests
-// app.get('/', (req, res) => {
-//   getLastTenRequests((err, rows) => {
-//     if (err) {
-//       res.status(500).send('Error retrieving data');
-//     } else {
-//       let html = '<html><body><h1>Last 10 Requests</h1><ul>';
-//       rows.forEach((row) => {
-//         html += `<li>${row.data}</li>`;
-//       });
-//       html += '</ul></body></html>';
-//       res.send(html);
-//     }
-//   });
-// });
 
 // Route to serve the HTML page with the last 10 requests
 app.get('/', (req, res) => {
@@ -52,9 +37,23 @@ app.get('/', (req, res) => {
             <style>
               .CodeMirror {
                 height: auto;
-                border: 1px solid #ddd;
+                border: 1px solid #333;
                 margin-bottom: 10px;
                 max-height: 200px;
+                font-family: Consolas, monospace;
+                font-size: 14px;
+                line-height: 1.3;
+              }
+              h1 {
+                color: wheat;
+              }
+              body{
+                background-color: #333
+              }
+              @media (min-width: 801px) {
+                body {
+                  padding: 4em;
+                }
               }
             </style>
           </head>
@@ -70,7 +69,7 @@ app.get('/', (req, res) => {
                     mode: {name: "markdown", json: true},
                     theme: 'dracula',
                     lineNumbers: true,
-                    readOnly: true,
+                    readOnly: false,
                     lineWrapping: true
                   });
                 `).join('')}
